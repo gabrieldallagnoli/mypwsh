@@ -1,6 +1,26 @@
 ### PowerShell Tweaks — Clean, fast, and UNIX-inspired PowerShell profile.
 ### Version 1.0.0 (2025-06-28)
 
+# Habilite ao editar o perfil (caso contrário, o perfil será sobrescrito automaticamente)
+$devmode = $false
+
+# Exibe um aviso caso o modo dev esteja acionado
+if ($devmode) {
+    Write-Host "#######################################" -ForegroundColor Red
+    Write-Host "#  MODO DE DESENVOLVEDOR HABILITADO!  #" -ForegroundColor Red
+    Write-Host "#                                     #" -ForegroundColor Red
+    Write-Host "#   Se não quer fazer alterações,     #" -ForegroundColor Red
+    Write-Host "#   rode o comando Update-Profile     #" -ForegroundColor Red
+    Write-Host "#   para voltar a última versão.      #" -ForegroundColor Red
+    Write-Host "#######################################" -ForegroundColor Red
+}
+
+# Define a pasta do arquivo contendo a data da última atualização
+$lastUpdatePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastUpdate.txt"
+
+# Define o intervalo de atualização em dias (se for -1, verifica sempre)
+$updateInterval = 7
+
 # Remove telemtria se executado como SYSTEM - bom para servidores e ambientes de produção
 if ([bool]([System.Security.Principal.WindowsIdentity]::GetCurrent()).IsSystem) {
     [System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', 'true', [System.EnvironmentVariableTarget]::Machine)
@@ -51,6 +71,19 @@ function Update-Profile {
     }
 }
 
+if (-not $devmode -and `
+    ($updateInterval -eq -1 -or `
+      -not (Test-Path $lastUpdatePath) -or `
+      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $lastUpdatePath), 'yyyy-MM-dd', $null)).TotalDays -gt $updateInterval)) {
+
+    Update-Profile
+    $currentTime = Get-Date -Format 'yyyy-MM-dd'
+    $currentTime | Out-File -FilePath $lastUpdatePath
+
+} elseif ($devmode) {
+    Write-Warning "Pulando verificação de update do perfil (modo dev)."
+}
+
 # Verifica atualizações do PowerShell
 function Update-PowerShell {
     try {
@@ -74,6 +107,18 @@ function Update-PowerShell {
     } catch {
         Write-Error "Falha ao atualizar o PowerShell — $_."
     }
+}
+
+if (-not $devmode -and `
+    ($updateInterval -eq -1 -or `
+     -not (Test-Path $lastUpdatePath) -or `
+     ((Get-Date).Date - [datetime]::ParseExact((Get-Content -Path $lastUpdatePath), 'yyyy-MM-dd', $null).Date).TotalDays -gt $updateInterval)) {
+
+    Update-PowerShell
+    $currentTime = Get-Date -Format 'yyyy-MM-dd'
+    $currentTime | Out-File -FilePath $lastUpdatePath
+} elseif ($devmode) {
+    Write-Warning "Pulando verificação de update do PowerShell (modo dev)."
 }
 
 # Inicializa o zoxide (cd inteligente)
