@@ -42,7 +42,7 @@ function Update-Profile {
             Write-Host "O perfil já está atualizado." -ForegroundColor Green
         }
     } catch {
-        Write-Error "Falha ao atualizar o perfil — $_."
+        Write-Host "Falha ao atualizar o perfil — $_." -ForegroundColor Red
     } finally {
         Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
     }
@@ -72,7 +72,7 @@ function Update-PowerShell {
             Write-Host "O PowerShell já está atualizado." -ForegroundColor Green
         }
     } catch {
-        Write-Error "Falha ao atualizar o PowerShell — $_."
+        Write-Host "Falha ao atualizar o PowerShell — $_." -ForegroundColor Red
     }
 }
 
