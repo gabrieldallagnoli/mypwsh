@@ -5,7 +5,7 @@
 # ============ Definições Gerais ==============
 # =============================================
 
-$devmode = $true
+$devmode = $false
 
 if ($devmode) {
     Write-Host "Modo de Desenvolvedor" -ForegroundColor Magenta
@@ -22,7 +22,7 @@ if ($devmode) {
 # ====== Gerenciamento de Atualizações ========
 # =============================================
 
-$updateFrequency = 7 # Em dias
+$updateFrequency = 7 # Vai buscar por atualizações a cada 7 dias (-1 para verificar sempre)
 $updateLog = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastUpdate.txt"
 
 # ---------------------------------------------
