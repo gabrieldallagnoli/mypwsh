@@ -8,7 +8,7 @@
 $devmode = $false # Desabilita atualizações automáticas (útil para editar o perfil)
 
 if ($devmode) {
-    Write-Host "Modo de Desenvolvedor" -ForegroundColor Magenta
+    Write-Host "Modo de Desenvolvedor ativado." -ForegroundColor Magenta
 }
 
 # ---------------------------------------------
@@ -31,18 +31,19 @@ $updateLog = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastUpda
 
 function Update-Profile {
     try {
+        Write-Host "Verificando atualizações do perfil..." -ForegroundColor Cyan
         $url = "https://raw.githubusercontent.com/gabrieldallagnoli/powershell-tweaks/main/Microsoft.PowerShell_profile.ps1"
         $oldhash = Get-FileHash $PROFILE
         Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
         $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
         if ($newhash.Hash -ne $oldhash.Hash) {
             Copy-Item -Path "$env:temp/Microsoft.PowerShell_profile.ps1" -Destination $PROFILE -Force
-            Write-Host "O perfil foi atualizado. Reinicie o shell para aplicar as mudanças." -ForegroundColor Magenta
+            Write-Host "Perfil atualizado. Reinicie o shell para aplicar as mudanças." -ForegroundColor Magenta
         } else {
-            Write-Host "O perfil já está atualizado." -ForegroundColor Green
+            Write-Host "Perfil já está atualizado." -ForegroundColor Green
         }
     } catch {
-        Write-Host "Falha ao atualizar o perfil — $_." -ForegroundColor Red
+        Write-Host "Falha ao atualizar o perfil: $_" -ForegroundColor Red
     } finally {
         Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
     }
@@ -67,12 +68,12 @@ function Update-PowerShell {
         if ($updateNeeded) {
             Write-Host "Atualizando PowerShell..." -ForegroundColor Yellow
             Start-Process powershell.exe -ArgumentList "-NoProfile -Command winget upgrade Microsoft.PowerShell --accept-source-agreements --accept-package-agreements" -Wait -NoNewWindow
-            Write-Host "O PowerShell foi atualizado. Reinicie o shell para aplicar as mudanças." -ForegroundColor Magenta
+            Write-Host "PowerShell atualizado. Reinicie o shell para aplicar as mudanças." -ForegroundColor Magenta
         } else {
-            Write-Host "O PowerShell já está atualizado." -ForegroundColor Green
+            Write-Host "PowerShell já está atualizado." -ForegroundColor Green
         }
     } catch {
-        Write-Host "Falha ao atualizar o PowerShell — $_." -ForegroundColor Red
+        Write-Host "Falha ao atualizar o PowerShell: $_" -ForegroundColor Red
     }
 }
 
@@ -95,7 +96,7 @@ if (-not $devmode -and `
       -not (Test-Path $updateLog) -or `
       ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $updateLog), 'yyyy-MM-dd', $null)).TotalDays -gt $updateFrequency)) {
 
-    Write-Host "Atualizações automáticas ignoradas" -ForegroundColor Cyan
+    Write-Host "Atualização automática ignorada (devmode)." -ForegroundColor Magenta
 }
 
 # Inicializa o Zoxide
