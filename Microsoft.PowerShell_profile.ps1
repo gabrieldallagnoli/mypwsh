@@ -84,17 +84,17 @@ function Update-PowerShell {
 if (-not $devmode -and `
     ($autoUpdateFrequency -eq -1 -or `
       -not (Test-Path $autoUpdateLog) -or `
-      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $autoUpdateLog), 'dd-MM-yyyy', $null)).TotalDays -gt $autoUpdateFrequency)) {
+      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $autoUpdateLog), 'dd/MM/yyyy', $null)).TotalDays -gt $autoUpdateFrequency)) {
 
     Update-Profile
     Update-PowerShell
-    $currentDate = Get-Date -Format 'dd-MM-yyyy'
+    $currentDate = Get-Date -Format 'dd/MM/yyyy'
     $currentDate | Out-File -FilePath $autoUpdateLog
 
 } elseif ($devmode -and `
     ($autoUpdateFrequency -eq -1 -or `
       -not (Test-Path $autoUpdateLog) -or `
-      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $autoUpdateLog), 'dd-MM-yyyy', $null)).TotalDays -gt $autoUpdateFrequency)) {
+      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $autoUpdateLog), 'dd/MM/yyyy', $null)).TotalDays -gt $autoUpdateFrequency)) {
 
     Write-Host "Atualização automática bloqueada." -ForegroundColor Magenta
 }
