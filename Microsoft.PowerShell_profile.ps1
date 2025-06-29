@@ -78,7 +78,7 @@ function Update-PowerShell {
 }
 
 # ---------------------------------------------
-# --------- Atualização Automáticas -----------
+# ---------- Atualização Automática -----------
 # ---------------------------------------------
 
 if (-not $devmode -and `
