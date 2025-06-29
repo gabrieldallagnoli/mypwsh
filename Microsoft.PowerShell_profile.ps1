@@ -5,7 +5,7 @@
 # ============ Definições Gerais ==============
 # =============================================
 
-$devmode = $false
+$devmode = $false # Desabilita atualizações automáticas (útil para editar o perfil)
 
 if ($devmode) {
     Write-Host "Modo de Desenvolvedor" -ForegroundColor Magenta
