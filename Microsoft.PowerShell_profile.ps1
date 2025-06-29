@@ -1,57 +1,34 @@
 ### PowerShell Tweaks — Clean, fast, and UNIX-inspired PowerShell profile.
-### Version 1.0.0 (2025-06-28)
+### Version 1.0.1 (2025-06-29)
 
-# Habilite ao editar o perfil (caso contrário, o perfil será sobrescrito automaticamente)
-$devmode = $false
+# =============================================
+# ============ Definições Gerais ==============
+# =============================================
 
-# Exibe um aviso caso o modo dev esteja acionado
+$devmode = $true
+
 if ($devmode) {
-    Write-Host "#######################################" -ForegroundColor Red
-    Write-Host "#  MODO DE DESENVOLVEDOR HABILITADO!  #" -ForegroundColor Red
-    Write-Host "#                                     #" -ForegroundColor Red
-    Write-Host "#   Se não quer fazer alterações,     #" -ForegroundColor Red
-    Write-Host "#   rode o comando Update-Profile     #" -ForegroundColor Red
-    Write-Host "#   para voltar a última versão.      #" -ForegroundColor Red
-    Write-Host "#######################################" -ForegroundColor Red
+    Write-Host "Modo de Desenvolvedor" -ForegroundColor Magenta
 }
 
-# Define a pasta do arquivo contendo a data da última atualização
-$lastUpdatePath = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastUpdate.txt"
+# ---------------------------------------------
+# -------- Desativação de Telemetria ----------
+# ---------------------------------------------
 
-# Define o intervalo de atualização em dias (se for -1, verifica sempre)
-$updateInterval = 7
+[System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', 'true', [System.EnvironmentVariableTarget]::Machine)
+[System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', 'true', [System.EnvironmentVariableTarget]::User)
 
-# Remove telemtria se executado como SYSTEM - bom para servidores e ambientes de produção
-if ([bool]([System.Security.Principal.WindowsIdentity]::GetCurrent()).IsSystem) {
-    [System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', 'true', [System.EnvironmentVariableTarget]::Machine)
-}
+# =============================================
+# ====== Gerenciamento de Atualizações ========
+# =============================================
 
-# Define um prompt minimalista
-function prompt {
-    $path = (Get-Location).Path.Replace($HOME, "~")
+$updateFrequency = 7 # Em dias
+$updateLog = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastUpdate.txt"
 
-    $branch = ""
-    try {
-        $branch = git rev-parse --abbrev-ref HEAD 2>$null
-    } catch {
-        $branch = ""
-    }
+# ---------------------------------------------
+# ---------- Atualização do Perfil ------------
+# ---------------------------------------------
 
-    if ($branch -and $branch -ne "HEAD") {
-        $branch = " on  $branch"
-    } else {
-        $branch = ""
-    }
-
-    Write-Host "" -NoNewline -ForegroundColor Blue
-    Write-Host "$path " -NoNewline -ForegroundColor Black -BackgroundColor Blue
-    Write-Host "" -NoNewline -ForegroundColor Blue -BackgroundColor Green
-    Write-Host "$branch" -NoNewline -ForegroundColor Black -BackgroundColor Green
-    Write-Host "" -NoNewline -ForegroundColor Green
-    return " "
-}
-
-# Verifica atualizações do perfil
 function Update-Profile {
     try {
         $url = "https://raw.githubusercontent.com/gabrieldallagnoli/powershell-tweaks/main/Microsoft.PowerShell_profile.ps1"
@@ -71,20 +48,10 @@ function Update-Profile {
     }
 }
 
-if (-not $devmode -and `
-    ($updateInterval -eq -1 -or `
-      -not (Test-Path $lastUpdatePath) -or `
-      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $lastUpdatePath), 'yyyy-MM-dd', $null)).TotalDays -gt $updateInterval)) {
+# ---------------------------------------------
+# -------- Atualização do PowerShell ----------
+# ---------------------------------------------
 
-    Update-Profile
-    $currentTime = Get-Date -Format 'yyyy-MM-dd'
-    $currentTime | Out-File -FilePath $lastUpdatePath
-
-} elseif ($devmode) {
-    Write-Warning "Pulando verificação de update do perfil (modo dev)."
-}
-
-# Verifica atualizações do PowerShell
 function Update-PowerShell {
     try {
         Write-Host "Verificando atualizações do PowerShell..." -ForegroundColor Cyan
@@ -109,17 +76,27 @@ function Update-PowerShell {
     }
 }
 
-if (-not $devmode -and `
-    ($updateInterval -eq -1 -or `
-     -not (Test-Path $lastUpdatePath) -or `
-     ((Get-Date).Date - [datetime]::ParseExact((Get-Content -Path $lastUpdatePath), 'yyyy-MM-dd', $null).Date).TotalDays -gt $updateInterval)) {
+# ---------------------------------------------
+# --------- Atualizações Automáticas ----------
+# ---------------------------------------------
 
+if (-not $devmode -and `
+    ($updateFrequency -eq -1 -or `
+      -not (Test-Path $updateLog) -or `
+      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $updateLog), 'yyyy-MM-dd', $null)).TotalDays -gt $updateFrequency)) {
+
+    Update-Profile
     Update-PowerShell
-    $currentTime = Get-Date -Format 'yyyy-MM-dd'
-    $currentTime | Out-File -FilePath $lastUpdatePath
-} elseif ($devmode) {
-    Write-Warning "Pulando verificação de update do PowerShell (modo dev)."
+    $currentDate = Get-Date -Format 'yyyy-MM-dd'
+    $currentDate | Out-File -FilePath $updateLog
+
+} elseif ($devmode -and `
+    ($updateFrequency -eq -1 -or `
+      -not (Test-Path $updateLog) -or `
+      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $updateLog), 'yyyy-MM-dd', $null)).TotalDays -gt $updateFrequency)) {
+
+    Write-Host "Atualizações automáticas ignoradas" -ForegroundColor Cyan
 }
 
-# Inicializa o zoxide (cd inteligente)
+# Inicializa o Zoxide
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
