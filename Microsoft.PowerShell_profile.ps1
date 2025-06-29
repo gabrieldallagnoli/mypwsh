@@ -1,5 +1,5 @@
 ### PowerShell Tweaks — Clean, fast, and UNIX-inspired PowerShell profile.
-### Version 1.0.1 (2025-06-29)
+### Version 1.0.1 (29-06-2025)
 
 # =============================================
 # ============ Definições Gerais ==============
