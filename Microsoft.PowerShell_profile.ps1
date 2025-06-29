@@ -99,5 +99,5 @@ if (-not $devmode -and `
     Write-Host "Atualização automática bloqueada." -ForegroundColor Magenta
 }
 
-# Inicializa o Zoxide
+# Inicializa o Zoxide (cd inteligente)
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
