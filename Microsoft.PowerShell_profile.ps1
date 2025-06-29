@@ -23,7 +23,8 @@ if ($devmode) {
 # =============================================
 
 $updateFrequency = 7 # Vai buscar por atualizações a cada 7 dias (-1 para verificar sempre)
-$updateLog = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastUpdate.txt"
+$profileUpdateLog = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastProfileUpdate.txt"
+$psUpdateLog = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastPSUpdate.txt"
 
 # ---------------------------------------------
 # ---------- Atualização do Perfil ------------
@@ -83,20 +84,36 @@ function Update-PowerShell {
 
 if (-not $devmode -and `
     ($updateFrequency -eq -1 -or `
-      -not (Test-Path $updateLog) -or `
-      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $updateLog), 'yyyy-MM-dd', $null)).TotalDays -gt $updateFrequency)) {
+      -not (Test-Path $profileUpdateLog) -or `
+      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $profileUpdateLog), 'dd-MM-yyyy', $null)).TotalDays -gt $updateFrequency)) {
 
     Update-Profile
-    Update-PowerShell
-    $currentDate = Get-Date -Format 'yyyy-MM-dd'
-    $currentDate | Out-File -FilePath $updateLog
+    $currentDate = Get-Date -Format 'dd-MM-yyyy'
+    $currentDate | Out-File -FilePath $profileUpdateLog
 
 } elseif ($devmode -and `
     ($updateFrequency -eq -1 -or `
-      -not (Test-Path $updateLog) -or `
-      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $updateLog), 'yyyy-MM-dd', $null)).TotalDays -gt $updateFrequency)) {
+      -not (Test-Path $profileUpdateLog) -or `
+      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $profileUpdateLog), 'dd-MM-yyyy', $null)).TotalDays -gt $updateFrequency)) {
 
-    Write-Host "Atualização automática ignorada (devmode)." -ForegroundColor Magenta
+    Write-Host "Atualização automática do perfil bloqueada." -ForegroundColor Magenta
+}
+
+if (-not $devmode -and `
+    ($updateFrequency -eq -1 -or `
+      -not (Test-Path $psUpdateLog) -or `
+      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $psUpdateLog), 'dd-MM-yyyy', $null)).TotalDays -gt $updateFrequency)) {
+
+    Update-PowerShell
+    $currentDate = Get-Date -Format 'dd-MM-yyyy'
+    $currentDate | Out-File -FilePath $psUpdateLog
+
+} elseif ($devmode -and `
+    ($updateFrequency -eq -1 -or `
+      -not (Test-Path $psUpdateLog) -or `
+      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $psUpdateLog), 'dd-MM-yyyy', $null)).TotalDays -gt $updateFrequency)) {
+
+    Write-Host "Atualização automática do PowerShell bloqueada." -ForegroundColor Magenta
 }
 
 # Inicializa o Zoxide
