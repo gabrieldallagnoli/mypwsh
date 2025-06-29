@@ -46,7 +46,7 @@ function Update-Profile {
             Write-Host "O perfil já está atualizado." -ForegroundColor Green
         }
     } catch {
-        Write-Error "Não foi possível verificar atualizações do perfil: $_"
+        Write-Error "Não foi possível verificar atualizações do perfil — $_."
     } finally {
         Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
     }
