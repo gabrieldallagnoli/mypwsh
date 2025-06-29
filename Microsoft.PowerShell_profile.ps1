@@ -12,7 +12,7 @@ if ($devmode) {
 }
 
 # ---------------------------------------------
-# -------- Desativação de Telemetria ----------
+# ---------- Bloqueio de Telemetria -----------
 # ---------------------------------------------
 
 [System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', 'true', [System.EnvironmentVariableTarget]::Machine)
