@@ -23,7 +23,6 @@ function prompt {
         $branch = ""
     }
 
-    Write-Host ""
     Write-Host "" -NoNewline -ForegroundColor Blue
     Write-Host "$path " -NoNewline -ForegroundColor Black -BackgroundColor Blue
     Write-Host "" -NoNewline -ForegroundColor Blue -BackgroundColor Green
@@ -46,9 +45,34 @@ function Update-Profile {
             Write-Host "O perfil já está atualizado." -ForegroundColor Green
         }
     } catch {
-        Write-Error "Não foi possível verificar atualizações do perfil — $_."
+        Write-Error "Falha ao atualizar o perfil — $_."
     } finally {
         Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
+    }
+}
+
+# Verifica atualizações do PowerShell
+function Update-PowerShell {
+    try {
+        Write-Host "Verificando atualizações do PowerShell..." -ForegroundColor Cyan
+        $updateNeeded = $false
+        $currentVersion = $PSVersionTable.PSVersion.ToString()
+        $gitHubApiUrl = "https://api.github.com/repos/PowerShell/PowerShell/releases/latest"
+        $latestReleaseInfo = Invoke-RestMethod -Uri $gitHubApiUrl
+        $latestVersion = $latestReleaseInfo.tag_name.Trim('v')
+        if ($currentVersion -lt $latestVersion) {
+            $updateNeeded = $true
+        }
+
+        if ($updateNeeded) {
+            Write-Host "Atualizando PowerShell..." -ForegroundColor Yellow
+            Start-Process powershell.exe -ArgumentList "-NoProfile -Command winget upgrade Microsoft.PowerShell --accept-source-agreements --accept-package-agreements" -Wait -NoNewWindow
+            Write-Host "O PowerShell foi atualizado. Reinicie o shell para aplicar as mudanças." -ForegroundColor Magenta
+        } else {
+            Write-Host "O PowerShell já está atualizado." -ForegroundColor Green
+        }
+    } catch {
+        Write-Error "Falha ao atualizar o PowerShell — $_."
     }
 }
 
