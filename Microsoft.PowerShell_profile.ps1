@@ -1,11 +1,12 @@
-### PowerShell Tweaks — Clean, fast, and UNIX-inspired PowerShell profile.
-### Version 1.0.1 (29-06-2025)
+# ---------------------------------------------
+# ------------- NeoShell | v1.01 --------------
+# ---------------------------------------------
 
 # =============================================
 # =============== Parâmetros ==================
 # =============================================
 
-$devmode = $false # Desabilita atualizações automáticas (útil para editar o perfil)
+$devmode = $false # Defina como $true caso for editar o perfil, caso contrário, suas alterações serão sobrescritas
 
 if ($devmode) {
     Write-Host "Modo de Desenvolvedor ativado." -ForegroundColor Magenta
@@ -22,7 +23,7 @@ if ($devmode) {
 # =============== Atualizações ================
 # =============================================
 
-$autoUpdateFrequency = 7 # Vai buscar por atualizações a cada 7 dias (-1 para verificar sempre)
+$autoUpdateFrequency = 7 # Busca por atualizações a cada x dias, defina como -1 para verificar sempre
 $autoUpdateLog = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastAutoUpdate.txt"
 
 # ---------------------------------------------
@@ -32,7 +33,7 @@ $autoUpdateLog = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\Last
 function Update-Profile {
     try {
         Write-Host "Verificando atualizações do perfil..." -ForegroundColor Cyan
-        $url = "https://raw.githubusercontent.com/gabrieldallagnoli/powershell-tweaks/main/Microsoft.PowerShell_profile.ps1"
+        $url = "https://raw.githubusercontent.com/gabrieldallagnoli/neoshell/main/Microsoft.PowerShell_profile.ps1"
         $oldhash = Get-FileHash $PROFILE
         Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
         $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
