@@ -1,1 +1,0 @@
-# 🖥️ Meu Perfil do PowerShell
