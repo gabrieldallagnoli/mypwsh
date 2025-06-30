@@ -1,5 +1,5 @@
 # ---------------------------------------------
-# ------------- NeoShell | v1.01 --------------
+# ------------- WinShell | v1.01 --------------
 # ---------------------------------------------
 
 # =============================================
@@ -33,7 +33,7 @@ $autoUpdateLog = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\Last
 function Update-Profile {
     try {
         Write-Host "Verificando atualizações do perfil..." -ForegroundColor Cyan
-        $url = "https://raw.githubusercontent.com/gabrieldallagnoli/neoshell/main/Microsoft.PowerShell_profile.ps1"
+        $url = "https://raw.githubusercontent.com/gabrieldallagnoli/winshell/main/Microsoft.PowerShell_profile.ps1"
         $oldhash = Get-FileHash $PROFILE
         Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
         $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
