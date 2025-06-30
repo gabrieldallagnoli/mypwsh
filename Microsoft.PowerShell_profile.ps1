@@ -2,7 +2,7 @@
 ### Version 1.0.1 (29-06-2025)
 
 # =============================================
-# ============ Definições Gerais ==============
+# =============== Parâmetros ==================
 # =============================================
 
 $devmode = $false # Desabilita atualizações automáticas (útil para editar o perfil)
@@ -19,7 +19,7 @@ if ($devmode) {
 [System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', 'true', [System.EnvironmentVariableTarget]::User)
 
 # =============================================
-# ====== Gerenciamento de Atualizações ========
+# =============== Atualizações ================
 # =============================================
 
 $autoUpdateFrequency = 7 # Vai buscar por atualizações a cada 7 dias (-1 para verificar sempre)
