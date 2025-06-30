@@ -1,5 +1,5 @@
-# ----------- v1.01 — 29/06/2025 ------------
-# https://github.com/gabrieldallagnoli/mypwsh
+# ----------- v1.02 — 30/06/2025 ------------
+# https://github.com/gabrieldallagnoli/myposh
 
 # =============================================
 # =============== Parâmetros ==================
@@ -32,7 +32,7 @@ $autoUpdateLog = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\Last
 function Update-Profile {
     try {
         Write-Host "Verificando atualizações do perfil..." -ForegroundColor Cyan
-        $url = "https://raw.githubusercontent.com/gabrieldallagnoli/mypwsh/main/Microsoft.PowerShell_profile.ps1"
+        $url = "https://raw.githubusercontent.com/gabrieldallagnoli/myposh/main/Microsoft.PowerShell_profile.ps1"
         $oldhash = Get-FileHash $PROFILE
         Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
         $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
