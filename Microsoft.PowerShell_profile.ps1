@@ -11,13 +11,6 @@ if ($devmode) {
     Write-Host "Modo de Desenvolvedor ativado." -ForegroundColor Magenta
 }
 
-# ---------------------------------------------
-# ---------- Bloqueio de Telemetria -----------
-# ---------------------------------------------
-
-[System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', 'true', [System.EnvironmentVariableTarget]::Machine)
-[System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', 'true', [System.EnvironmentVariableTarget]::User)
-
 # =============================================
 # =============== Atualizações ================
 # =============================================
