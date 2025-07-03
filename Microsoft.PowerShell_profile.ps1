@@ -19,30 +19,6 @@ $autoUpdateFrequency = 7 # Busca por atualizações a cada x dias, defina como -
 $autoUpdateLog = [Environment]::GetFolderPath("MyDocuments") + "\PowerShell\LastAutoUpdate.txt"
 
 # ---------------------------------------------
-# ---------- Atualização do Perfil ------------
-# ---------------------------------------------
-
-function Update-Profile {
-    try {
-        Write-Host "Verificando atualizações do perfil..." -ForegroundColor Cyan
-        $url = "https://raw.githubusercontent.com/gabrieldallagnoli/powershell-profile/main/Microsoft.PowerShell_profile.ps1"
-        $oldhash = Get-FileHash $PROFILE
-        Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
-        $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
-        if ($newhash.Hash -ne $oldhash.Hash) {
-            Copy-Item -Path "$env:temp/Microsoft.PowerShell_profile.ps1" -Destination $PROFILE -Force
-            Write-Host "Perfil atualizado. Reinicie o shell para aplicar as mudanças." -ForegroundColor Magenta
-        } else {
-            Write-Host "Perfil já está atualizado." -ForegroundColor Green
-        }
-    } catch {
-        Write-Host "Falha ao atualizar o perfil: $_" -ForegroundColor Red
-    } finally {
-        Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
-    }
-}
-
-# ---------------------------------------------
 # -------- Atualização do PowerShell ----------
 # ---------------------------------------------
 
@@ -71,6 +47,30 @@ function Update-PowerShell {
 }
 
 # ---------------------------------------------
+# ---------- Atualização do Perfil ------------
+# ---------------------------------------------
+
+function Update-Profile {
+    try {
+        Write-Host "Verificando atualizações do perfil..." -ForegroundColor Cyan
+        $url = "https://raw.githubusercontent.com/gabrieldallagnoli/powershell-profile/main/Microsoft.PowerShell_profile.ps1"
+        $oldhash = Get-FileHash $PROFILE
+        Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
+        $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
+        if ($newhash.Hash -ne $oldhash.Hash) {
+            Copy-Item -Path "$env:temp/Microsoft.PowerShell_profile.ps1" -Destination $PROFILE -Force
+            Write-Host "Perfil atualizado. Reinicie o shell para aplicar as mudanças." -ForegroundColor Magenta
+        } else {
+            Write-Host "Perfil já está atualizado." -ForegroundColor Green
+        }
+    } catch {
+        Write-Host "Falha ao atualizar o perfil: $_" -ForegroundColor Red
+    } finally {
+        Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
+    }
+}
+
+# ---------------------------------------------
 # ---------- Atualização Automática -----------
 # ---------------------------------------------
 
@@ -79,8 +79,8 @@ if (-not $devmode -and `
       -not (Test-Path $autoUpdateLog) -or `
       ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $autoUpdateLog), 'dd-MM-yyyy', $null)).TotalDays -gt $autoUpdateFrequency)) {
 
-    Update-Profile
     Update-PowerShell
+    Update-Profile
     $currentDate = Get-Date -Format 'dd-MM-yyyy'
     $currentDate | Out-File -FilePath $autoUpdateLog
 
